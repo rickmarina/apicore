@@ -44,7 +44,7 @@ namespace com.rorisoft.structures.tree
         }
 
 
-        public void removePOI(long id)
+        public void removePOI(string id)
         {
             bool r = rootNode.removeNeighbour(id);
             if (r)

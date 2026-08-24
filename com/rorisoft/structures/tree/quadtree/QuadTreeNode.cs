@@ -151,7 +151,7 @@ namespace com.rorisoft.structures.tree.quadtree
         * @param id the neighbour's id
         * @return if the neighbour existed and was removed
         */
-        public bool removeNeighbour(long id)
+        public bool removeNeighbour(string id)
         {
             foreach (POI<TData> neighbor in mNeighbours)
             {

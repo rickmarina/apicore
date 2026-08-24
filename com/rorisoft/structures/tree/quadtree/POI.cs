@@ -10,14 +10,14 @@ namespace com.rorisoft.structures.tree.quadtree
     public class POI<T> :IPoi //where T : class?, new()
     {
 
-        public long id { get; set; }
-        public string rotulo { get; set; }
+        public string id { get; set; }
+        public string? rotulo { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
 
         public T data { get; set; }
 
-        public POI(long id, double latitude, double longitude, T data)
+        public POI(string id, double latitude, double longitude, T data)
         {
             this.id = id;
             this.latitude = latitude;
@@ -26,7 +26,7 @@ namespace com.rorisoft.structures.tree.quadtree
             this.data = data;
         }
 
-        public long getId() => this.id;
+        public string getId() => this.id;
 
         public double getLatitude() => this.latitude;
 

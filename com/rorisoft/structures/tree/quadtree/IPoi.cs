@@ -10,7 +10,7 @@ namespace com.rorisoft.structures.tree.quadtree
     public interface IPoi
     {
 
-        public long getId();
+        public string getId();
         public double getLatitude();
         public double getLongitude(); 
     }
