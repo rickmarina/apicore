@@ -32,7 +32,8 @@ namespace com.rorisoft.db
         {
             try
             {
-                if (this.conexion?.State != ConnectionState.Open) { 
+                if (this.conexion?.State != ConnectionState.Open)
+                {
                     this.conexion = new MySqlConnection(this.cadenaConexion);
                     this.conexion.Open();
                 }
@@ -96,14 +97,16 @@ namespace com.rorisoft.db
 
         public void setComando(String q) { this.comando = new MySqlCommand(q, this.conexion); }
         public void setComando(String q, long limite) { setComando(q + " limit " + limite.ToString() + ";"); }
-        public void setComandoTimeOut(String q, int t) { 
-            if (this.comando is not null) 
-                this.comando.CommandTimeout = t; setComando(q); 
+        public void setComandoTimeOut(String q, int t)
+        {
+            if (this.comando is not null)
+                this.comando.CommandTimeout = t; setComando(q);
         }
 
-        public void setTimeOut(int t) { 
-            if (this.comando is not null) 
-            this.comando.CommandTimeout = t; 
+        public void setTimeOut(int t)
+        {
+            if (this.comando is not null)
+                this.comando.CommandTimeout = t;
         }
         public void clearParameters() { this.comando?.Parameters.Clear(); }
 
@@ -160,6 +163,9 @@ namespace com.rorisoft.db
 
         public int ejecutarQueryWithExitParameter()
         {
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
             MySqlParameter param = new MySqlParameter("@result", SqlDbType.Int);
             param.Direction = ParameterDirection.ReturnValue;
             this.comando.Parameters.Add(param);
@@ -167,21 +173,33 @@ namespace com.rorisoft.db
             return Convert.ToInt32(param.Value);
         }
 
-        public int ejecutarQuery() { return this.comando.ExecuteNonQuery(); }
-        public int ejecutarQuery(String q) { this.setComando(q); return this.comando.ExecuteNonQuery(); }
+        public int ejecutarQuery()
+        {
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+            return this.comando.ExecuteNonQuery();
+        }
+        public int ejecutarQuery(String q)
+        {
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
+            this.setComando(q);
+            return this.comando.ExecuteNonQuery();
+        }
 
         public int ejecutarScalar()
         {
-            int resultado = 0;
-            try
-            {
-                resultado = Convert.ToInt32(this.comando.ExecuteScalar());
-            }
-            catch (Exception) { resultado = 0; }
-            return resultado;
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
+            return Convert.ToInt32(this.comando.ExecuteScalar());
         }
         public double ejecutarScalarDouble()
         {
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
             double resultado = 0;
             try
             {
@@ -192,6 +210,9 @@ namespace com.rorisoft.db
         }
         public decimal ejecutarScalarDecimal()
         {
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
             decimal resultado = 0;
             try
             {
@@ -203,14 +224,25 @@ namespace com.rorisoft.db
 
         public T ejecutarScalar<T>()
         {
-            T resultado = default(T);
+            if (this.comando == null)
+                throw new InvalidOperationException("Comando no ha sido inicializado.");
+
             try
             {
-                object scalarResult = this.comando.ExecuteScalar();
-                resultado = (T)(dynamic)scalarResult;
+                object? value = this.comando.ExecuteScalar();
+
+                if (value is null || value == DBNull.Value)
+                    return default!;
+
+                if (value is T result)
+                    return result;
+
+                return (T)Convert.ChangeType(value, Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T));
             }
-            catch (Exception) { resultado = default(T); }
-            return resultado;
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public T ejecutarScalarWithIdentity<T>()
@@ -218,7 +250,7 @@ namespace com.rorisoft.db
             if (this.comando.CommandText.Trim().Length == 0)
                 throw new BBDDException(BBDDException.TipoError.Critica, "No se puede ejecutar un comando que no existe", new Exception("No se puede ejecutar un comando que no existe"));
 
-            if (this.comando.CommandText.Trim()[this.comando.CommandText.Trim().Length-1] == ';') 
+            if (this.comando.CommandText.Trim()[this.comando.CommandText.Trim().Length - 1] == ';')
                 this.comando.CommandText += " SELECT LAST_INSERT_ID();";
             else
                 this.comando.CommandText += "; SELECT LAST_INSERT_ID();";
@@ -313,7 +345,7 @@ namespace com.rorisoft.db
             return diccionario;
         }
 
-       
+
         public void Close()
         {
             if (this.reader != null)
