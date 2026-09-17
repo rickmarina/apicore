@@ -160,6 +160,14 @@ namespace com.rorisoft.db
                 this.motordb?.addParameter(param, DBNull.Value);
         }
 
+        public void addParameterOptional(string param, bool? val)
+        {
+            if (val.HasValue)
+                this.motordb?.addParameter(param, val.Value);
+            else
+                this.motordb?.addParameter(param, DBNull.Value);
+        }
+
         public void addParameter(string param, DBNull val)
         {
             if (this.motordb != null)
