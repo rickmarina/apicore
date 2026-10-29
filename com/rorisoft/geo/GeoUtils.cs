@@ -9,6 +9,8 @@ namespace com.rorisoft.geo
 
         private const int EARTH_RADIUS = 6371; // Radius of the earth in km
 
+
+
         public static double geoDistanciaKm(double lon1, double lat1, double lon2, double lat2)
         {
             //return geoDistanciaKm(utils.ParseUtils.parseDecimal(lon1), utils.ParseUtils.parseDecimal(lat1), utils.ParseUtils.parseDecimal(lon2), utils.ParseUtils.parseDecimal(lat2));
@@ -19,6 +21,11 @@ namespace com.rorisoft.geo
             double d = EARTH_RADIUS * c;
 
             return d;
+        }
+
+        public static int geoDistanciaMeters(double lon1, double lat1, double lon2, double lat2)
+        {
+            return (int)(GeoUtils.geoDistanciaKm(lon1, lat1, lon2, lat2) * 1000);
         }
 
         public static double geoDistanciaKm(decimal lon1, decimal lat1, decimal lon2, decimal lat2)
