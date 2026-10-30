@@ -42,7 +42,7 @@ namespace com.rorisoft.usecase
         {
             try
             {
-                return EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig(key);
+                return EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig(key) ?? string.Empty;
             }
             catch (Exception)
             {
