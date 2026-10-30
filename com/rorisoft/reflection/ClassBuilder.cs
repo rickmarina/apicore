@@ -8,20 +8,22 @@ namespace com.rorisoft.reflection
     public class ClassBuilder
     {
 
-        AssemblyName asemblyName;
+        private readonly AssemblyName asemblyName;
 
-        public Type tipo = null; 
+        public Type? tipo = null; 
         public ClassBuilder(string ClassName)
         {
-            this.asemblyName = new AssemblyName(ClassName);
-            this.asemblyName.Name = ClassName;
-            this.asemblyName.Version = new Version("1.0.0");
-            this.asemblyName.CultureName = CultureInfo.CurrentCulture.Name;
+            this.asemblyName = new AssemblyName(ClassName)
+            {
+                Name = ClassName,
+                Version = new Version("1.0.0"),
+                CultureName = CultureInfo.CurrentCulture.Name
+            };
             //this.asemblyName.SetPublicKeyToken(new Guid().ToByteArray());
 
         }
 
-        public object CreateObject(string[] PropertyNames, Type[] Types)
+        public object? CreateObject(string[] PropertyNames, Type[] Types)
         {
             if (PropertyNames.Length != Types.Length)
             {
@@ -39,15 +41,21 @@ namespace com.rorisoft.reflection
             return Activator.CreateInstance(tipo);
         }
 
-        public IList CreateListObject()
+        public IList? CreateListObject()
         {
-            
-            IList lista = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(this.tipo));
+            if (this.tipo is null) 
+                throw new InvalidOperationException("Tipo cannot be null to create a list object");
+
+            IList? lista = Activator.CreateInstance(typeof(List<>).MakeGenericType(tipo)) as IList;
             return lista;
         }
 
         private TypeBuilder CreateClass()
         {
+
+            ArgumentNullException.ThrowIfNull(this.asemblyName, "AssemblyName is null");
+            ArgumentNullException.ThrowIfNull(this.asemblyName.Name, "AssemblyName is null");
+
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(this.asemblyName, AssemblyBuilderAccess.Run);
 
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(this.asemblyName.Name);

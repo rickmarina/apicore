@@ -20,13 +20,13 @@ namespace com.rorisoft.log2
         public string entidadID { get; set; }
         public DateTime fecha { get; set; }
         public int usuarioID { get; set; }
-        public string descripcion { get; set; }
+        public string? descripcion { get; set; }
         public LOGLEVEL level { get; set; }
-        public string response { get; set; }
-        public string request { get; set; }
-        public string message { get; set; }
-        public string className { get; set; }
-        public string method { get; set; }
+        public string? response { get; set; }
+        public string? request { get; set; }
+        public string? message { get; set; }
+        public string? className { get; set; }
+        public string? method { get; set; }
     }
 
     public static class LogConstants
