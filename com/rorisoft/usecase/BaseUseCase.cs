@@ -16,13 +16,13 @@ namespace com.rorisoft.usecase
 
         static BaseUseCase()
         {
-            CONFIG_URLGOV = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("url_es");
-            CONFIG_ENVIRONMENT = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetEnvironment;
-            CONFIG_CONNECTION = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetConnection;
+            CONFIG_URLGOV = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("url_es") ?? string.Empty;
+            CONFIG_ENVIRONMENT = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetEnvironment ?? string.Empty;
+            CONFIG_CONNECTION = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetConnection ?? string.Empty;
             CONFIG_LOGBBDD = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetLogBBDD;
 
-            STORAGE_CONNETION = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("Azure:storage");
-            STORAGE_CONTAINER = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("Azure:container");
+            STORAGE_CONNETION = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("Azure:storage") ?? string.Empty;
+            STORAGE_CONTAINER = EnvironmentService.getSingleton(EnvironmentService.Environment_Type.APPSETTINGS_LOCAL).GetOtherConfig("Azure:container") ?? string.Empty;
         }
 
 

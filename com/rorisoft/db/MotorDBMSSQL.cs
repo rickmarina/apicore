@@ -45,13 +45,15 @@ namespace com.rorisoft.db
 
         //-- Gestión de transacciones --
         #region "Gestión de transacciones"
-        public void beginTransaction(String transname) { 
-            this.trans = this.conexion?.BeginTransaction(IsolationLevel.ReadCommitted); 
+        public void beginTransaction(String transname)
+        {
+            this.trans = this.conexion?.BeginTransaction(IsolationLevel.ReadCommitted);
         }
-        public void linkTransaction() { 
+        public void linkTransaction()
+        {
             ArgumentNullException.ThrowIfNull(this.comando, "Comando no puede ser nulo. Debe establecerse antes de llamar a linkTransaction()");
 
-            this.comando.Transaction = this.trans; 
+            this.comando.Transaction = this.trans;
         }
         public void rollBackTransaction() { this.trans?.Rollback(); }
         public void commitTransaction() { this.trans?.Commit(); }
@@ -104,17 +106,20 @@ namespace com.rorisoft.db
 
         public void setComando(String q) { this.comando = new SqlCommand(q, this.conexion); }
         public void setComando(String q, long limite) { setComando(q + " limit " + limite.ToString() + ";"); }
-        public void setComandoTimeOut(String q, int t) {
+        public void setComandoTimeOut(String q, int t)
+        {
             ArgumentNullException.ThrowIfNull(this.comando, "Comando no puede ser nulo. Debe establecerse antes de llamar a setComandoTimeOut()");
-            this.comando.CommandTimeout = t; setComando(q); 
+            this.comando.CommandTimeout = t; setComando(q);
         }
-        public void setTimeOut(int t) { 
+        public void setTimeOut(int t)
+        {
             ArgumentNullException.ThrowIfNull(this.comando, "Comando no puede ser nulo. Debe establecerse antes de llamar a setTimeOut()");
-            this.comando.CommandTimeout = t; 
+            this.comando.CommandTimeout = t;
         }
-        public void clearParameters() { 
+        public void clearParameters()
+        {
             ArgumentNullException.ThrowIfNull(this.comando, "Comando no puede ser nulo. Debe establecerse antes de llamar a clearParameters()");
-            this.comando.Parameters.Clear(); 
+            this.comando.Parameters.Clear();
         }
 
         public void addParameter(String param, string? val)
@@ -170,9 +175,10 @@ namespace com.rorisoft.db
         }
 
         public int ejecutarQuery() { return this.comando?.ExecuteNonQuery() ?? 0; }
-        public int ejecutarQuery(String q) { 
-            this.setComando(q); 
-            return this.comando?.ExecuteNonQuery() ?? 0; 
+        public int ejecutarQuery(String q)
+        {
+            this.setComando(q);
+            return this.comando?.ExecuteNonQuery() ?? 0;
         }
 
         public int ejecutarScalar()
@@ -207,18 +213,26 @@ namespace com.rorisoft.db
         }
         public T ejecutarScalar<T>()
         {
-            T resultado = default(T);
-
-            if (this.comando is null)
+            if (this.comando == null)
                 throw new BBDDException("Command cannot be null. It must be set before calling ejecutarScalar<T>()");
-                
+
             try
             {
-                object scalarResult = this.comando.ExecuteScalar();
-                resultado = (T)scalarResult;
+                object? value = this.comando.ExecuteScalar();
+
+                if (value is null || value == DBNull.Value)
+                    return default!;
+
+                if (value is T result)
+                    return result;
+
+                return (T)Convert.ChangeType(value, Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T));
             }
-            catch (Exception) { resultado = default(T); }
-            return resultado;
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
         public T ejecutarScalarWithIdentity<T>()
@@ -300,12 +314,16 @@ namespace com.rorisoft.db
         }
         public string queryResultString()
         {
-            string r;
+            string r = string.Empty;
             QueryReader();
+
+            if (this.reader is null)
+                return r;
+
             if (this.reader.HasRows)
             {
                 this.reader.Read();
-                r = this.reader[0].ToString();
+                r = this.reader[0]?.ToString() ?? string.Empty;
             }
             else { r = ""; }
             this.reader.Close();
@@ -325,7 +343,11 @@ namespace com.rorisoft.db
                 DataSet datos = Query();
                 foreach (DataRow item in datos.Tables[0].Rows)
                 {
-                    diccionario.Add(item[campoClave].ToString(), item[campoValor].ToString());
+                    string? key = item[campoClave]?.ToString();
+                    string? value = item[campoValor]?.ToString();
+
+                    if (key is not null && value is not null)
+                        _ = diccionario.TryAdd(key, value);
                 }
             }
             catch (Exception ex)
@@ -344,7 +366,7 @@ namespace com.rorisoft.db
 
             if (this.conexion != null)
                 this.conexion.Close();
-                        
+
         }
         public void CloseAndDispose()
         {
@@ -358,8 +380,8 @@ namespace com.rorisoft.db
 
         public void Dispose()
         {
-                this.comando?.Dispose();
-                this.reader?.Dispose();
+            this.comando?.Dispose();
+            this.reader?.Dispose();
         }
 
         public int insertarLog(LogVO log)
@@ -383,7 +405,8 @@ namespace com.rorisoft.db
 
                 pk = ejecutarScalar();
 
-            } else
+            }
+            else
             {
                 throw new BBDDException("No se puede insertar log, la conexión es nula");
             }

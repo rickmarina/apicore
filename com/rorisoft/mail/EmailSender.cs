@@ -72,8 +72,10 @@ namespace com.rorisoft.mail
             ArgumentNullException.ThrowIfNull(_emailSettings.from, nameof(_emailSettings.from));
 
             mensaje.From = new MailAddress(_emailSettings.user, _emailSettings.from);
-            if (sendtoMultiple.Count == 0)
+            if (sendtoMultiple.Count == 0) {
+                ArgumentNullException.ThrowIfNullOrEmpty(sendTo, nameof(sendTo));
                 mensaje.To.Add(new MailAddress(sendTo));
+            }
             else
                 foreach (String item in sendtoMultiple)
                 {
@@ -139,8 +141,10 @@ namespace com.rorisoft.mail
 
             //Crear mensaje
             mensaje.From = new MailAddress(_emailSettings.user, _emailSettings.from);
-            if (sendtoMultiple.Count == 0)
+            if (sendtoMultiple.Count == 0) {
+                ArgumentNullException.ThrowIfNullOrEmpty(sendTo, nameof(sendTo));
                 mensaje.To.Add(new MailAddress(sendTo));
+            }
             else
                 foreach (String item in sendtoMultiple)
                 {
@@ -158,8 +162,8 @@ namespace com.rorisoft.mail
                 //Crear diccionario de reemplazos
                 Dictionary<string, string> replaces = new Dictionary<string, string>()
                 {
-                    {"[texto]", texto },
-                    {"[texto2]", texto2 },
+                    {"[texto]", texto ?? string.Empty },
+                    {"[texto2]", texto2 ?? string.Empty },
                     {"[footer-company]", _emailSettings?.footerCompany ?? string.Empty},
                     {"[footer-powered]", _emailSettings ?.footerPowered ?? string.Empty},
                     {"[botonurl]", _emailSettings ?.botonurl ?? string.Empty },

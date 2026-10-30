@@ -46,10 +46,16 @@ namespace com.rorisoft.db
 
         //-- Gestión de transacciones --
         #region "Gestión de transacciones"
-        public void beginTransaction(String transname) { this.trans = this.conexion.BeginTransaction(IsolationLevel.ReadCommitted); }
-        public void linkTransaction() { this.comando.Transaction = this.trans; }
-        public void rollBackTransaction() { this.trans.Rollback(); }
-        public void commitTransaction() { this.trans.Commit(); }
+        public void beginTransaction(String transname)
+        {
+            if (this.conexion is null)
+                throw new InvalidOperationException("Connection is null and cannot begin new transactions");
+
+            this.trans = this.conexion.BeginTransaction(IsolationLevel.ReadCommitted);
+        }
+        public void linkTransaction() { this.comando?.Transaction = this.trans; }
+        public void rollBackTransaction() { this.trans?.Rollback(); }
+        public void commitTransaction() { this.trans?.Commit(); }
         #endregion
 
         //public static long getLastIdentity(InterfaceDB db)
@@ -62,11 +68,16 @@ namespace com.rorisoft.db
 
         public DataSet Query(String q)
         {
+            if (this.conexion is null)
+                throw new InvalidOperationException("Connection is null and cannot Query");
+
             try
             {
                 if (this.conexion.State == ConnectionState.Closed) { Connect(); }
-                this.comando = new MySqlCommand(q, this.conexion);
-                this.comando.CommandType = CommandType.Text;
+                this.comando = new(q, this.conexion)
+                {
+                    CommandType = CommandType.Text
+                };
                 this.adapter = new MySqlDataAdapter(this.comando);
 
                 DataSet ds = new DataSet();
@@ -80,16 +91,23 @@ namespace com.rorisoft.db
 
         public DataSet Query()
         {
+            if (this.conexion is null)
+                throw new InvalidOperationException("Connection is null and cannot Query");
+
+            if (this.comando is null)
+                throw new InvalidOperationException("Command is null and cannot Query");
+
             try
             {
                 if (this.conexion.State == ConnectionState.Closed) { Connect(); }
                 this.comando.CommandType = CommandType.Text;
                 this.adapter = new MySqlDataAdapter(this.comando);
 
-                DataSet ds = new DataSet();
-                this.adapter.Fill(ds);
-
-                return ds;
+                using (DataSet ds = new())
+                {
+                    this.adapter.Fill(ds);
+                    return ds;
+                }
             }
             catch (NullReferenceException ex) { throw new BBDDException(BBDDException.TipoError.Critica, "Dataset vacío", ex); }
             catch (MySqlException exsql) { throw new BBDDException(BBDDException.TipoError.Fatal, "Error al conectar db", exsql); }
@@ -153,6 +171,9 @@ namespace com.rorisoft.db
 
         public void TransformarParametrosMotor(string orig, string dest)
         {
+            if (this.comando is null)
+                throw new InvalidOperationException("Command is null and cannot TransformarParametrosMotor");
+
             foreach (MySqlParameter param in this.comando.Parameters)
             {
                 param.ParameterName = param.ParameterName.Replace(orig, dest);
@@ -247,20 +268,21 @@ namespace com.rorisoft.db
 
         public T ejecutarScalarWithIdentity<T>()
         {
-            if (this.comando.CommandText.Trim().Length == 0)
+            if (this.comando?.CommandText.Trim().Length == 0)
                 throw new BBDDException(BBDDException.TipoError.Critica, "No se puede ejecutar un comando que no existe", new Exception("No se puede ejecutar un comando que no existe"));
 
-            if (this.comando.CommandText.Trim()[this.comando.CommandText.Trim().Length - 1] == ';')
+            if (this.comando?.CommandText.Trim()[this.comando.CommandText.Trim().Length - 1] == ';')
                 this.comando.CommandText += " SELECT LAST_INSERT_ID();";
             else
-                this.comando.CommandText += "; SELECT LAST_INSERT_ID();";
+                this.comando?.CommandText += "; SELECT LAST_INSERT_ID();";
 
             return ejecutarScalar<T>();
         }
 
         public void procedimientoAlmacenado(String q)
         {
-            setComando(q); this.comando.CommandType = CommandType.StoredProcedure;
+            setComando(q); 
+            this.comando?.CommandType = CommandType.StoredProcedure;
         }
 
         public bool IsProcedimientoAlmacenado()
@@ -270,10 +292,10 @@ namespace com.rorisoft.db
 
         public bool Read()
         {
-            return this.reader.Read();
+            return this.reader?.Read() ?? false;
         }
 
-        public IDataReader getReader()
+        public IDataReader? getReader()
         {
             return this.reader;
         }
@@ -285,12 +307,15 @@ namespace com.rorisoft.db
 
         public void QueryReader()
         {
-            if (this.conexion.State == ConnectionState.Closed) this.Connect();
-            this.reader = this.comando.ExecuteReader();
+            if (this.conexion?.State == ConnectionState.Closed) this.Connect();
+            this.reader = this.comando?.ExecuteReader();
         }
 
         public String obtenerQueryConParametros()
         {
+            if (this.comando is null) 
+                throw new InvalidOperationException("Command is null and cannot obtenerQueryConParametros");
+
             String query = this.comando.CommandText;
             foreach (MySqlParameter p in this.comando.Parameters)
             {
@@ -302,22 +327,20 @@ namespace com.rorisoft.db
         public void QueryReader(String q)
         {
             setComando(q);
-            this.comando.CommandType = CommandType.Text;
+            this.comando?.CommandType = CommandType.Text;
             this.QueryReader();
-            //return this.QueryReader();
         }
         public String queryResultString()
         {
             String r;
-            //this.reader = (MySqlDataReader)QueryReader();
             QueryReader();
-            if (this.reader.HasRows)
+            if (this.reader?.HasRows ?? false)
             {
                 this.reader.Read();
-                r = this.reader[0].ToString();
+                r = this.reader?[0].ToString() ?? string.Empty;
             }
             else { r = ""; }
-            this.reader.Close();
+            this.reader?.Close();
             return r;
         }
 
@@ -328,13 +351,17 @@ namespace com.rorisoft.db
         }
         public Dictionary<String, String> crearDiccionario(String campoClave, String campoValor)
         {
-            Dictionary<String, String> diccionario = new Dictionary<string, string>();
+            Dictionary<String, String> diccionario = [];
             try
             {
                 DataSet datos = Query();
                 foreach (DataRow item in datos.Tables[0].Rows)
                 {
-                    diccionario.Add(item[campoClave].ToString(), item[campoValor].ToString());
+                    string? key = item[campoClave]?.ToString();
+                    string? value = item[campoValor]?.ToString();
+
+                    if (key is not null && value is not null)
+                        _ =diccionario.TryAdd(key, value);
                 }
             }
             catch (Exception ex)

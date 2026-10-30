@@ -17,16 +17,16 @@ lastDtbSucceeded
 AssemblyName=apicore9
 BaseIntermediateOutputPath=obj/
 BaseOutputPath=bin/
-MaxSupportedLangVersion=13.0
+MaxSupportedLangVersion=14.0
 OutputType=Library
 ProjectAssetsFile=<PATH>obj/project.assets.json
 RootNamespace=apicore9
-TargetFramework=net9.0
+TargetFramework=net10.0
 TargetFrameworkIdentifier=.NETCoreApp
-TargetFrameworkVersion=v9.0
-TargetPath=<PATH>bin/Debug/net9.0/apicore9.dll
-TargetRefPath=<PATH>obj/Debug/net9.0/ref/apicore9.dll
-TemporaryDependencyNodeTargetIdentifier=net9.0
+TargetFrameworkVersion=v10.0
+TargetPath=<PATH>bin/Debug/net10.0/apicore9.dll
+TargetRefPath=<PATH>obj/Debug/net10.0/ref/apicore9.dll
+TemporaryDependencyNodeTargetIdentifier=net10.0
 
 [commandLineArguments]
 /noconfig
@@ -36,21 +36,22 @@ TemporaryDependencyNodeTargetIdentifier=net9.0
 /fullpaths
 /nostdlib+
 /errorreport:prompt
-/warn:9
-/define:TRACE;DEBUG;NET;NET9_0;NETCOREAPP;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER
+/warn:10
+/define:TRACE;DEBUG;NET;NET10_0;NETCOREAPP;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER
 /highentropyva+
 /nullable:enable
+/features:"InterceptorsNamespaces=;Microsoft.Extensions.Validation.Generated"
 /debug+
 /debug:portable
 /filealign:512
 /optimize-
-/out:obj/Debug/net9.0/apicore9.dll
-/refout:obj/Debug/net9.0/refint/apicore9.dll
+/out:obj/Debug/net10.0/apicore9.dll
+/refout:obj/Debug/net10.0/refint/apicore9.dll
 /target:library
 /warnaserror-
 /utf8output
 /deterministic+
-/langversion:13.0
+/langversion:14.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
@@ -127,11 +128,10 @@ com/rorisoft/
   DateUtils.cs
   EncryptionUtils.cs
   ParseUtils.cs
-obj/Debug/net9.0/
- .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+obj/Debug/net10.0/
+ .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  apicore9.AssemblyInfo.cs
  apicore9.GlobalUsings.g.cs
-Class1.cs
 
 [frameworkPacks]
 Microsoft.NETCore.App.Ref
@@ -146,7 +146,7 @@ Microsoft.NETCore.App.Ref
  k4os.compression.lz4/1.3.8/lib/net6.0/K4os.Compression.LZ4.dll
  k4os.hash.xxhash/1.0.8/lib/net6.0/K4os.Hash.xxHash.dll
  microsoft.bcl.asyncinterfaces/6.0.0/lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll
- microsoft.bcl.cryptography/11.0.0-rc.3.26522.148/lib/netstandard2.1/Microsoft.Bcl.Cryptography.dll
+ microsoft.bcl.cryptography/9.0.4/lib/net9.0/Microsoft.Bcl.Cryptography.dll
  microsoft.data.sqlclient/6.1.0/ref/net9.0/Microsoft.Data.SqlClient.dll
  microsoft.extensions.configuration.abstractions/9.0.7/lib/net9.0/Microsoft.Extensions.Configuration.Abstractions.dll
  microsoft.extensions.configuration.fileextensions/9.0.7/lib/net9.0/Microsoft.Extensions.Configuration.FileExtensions.dll
@@ -171,10 +171,10 @@ Microsoft.NETCore.App.Ref
  system.clientmodel/1.1.0/lib/net6.0/System.ClientModel.dll
  system.configuration.configurationmanager/9.0.4/lib/net9.0/System.Configuration.ConfigurationManager.dll
  system.diagnostics.eventlog/9.0.4/lib/net9.0/System.Diagnostics.EventLog.dll
- system.formats.asn1/11.0.0-rc.3.26522.148/lib/netstandard2.0/System.Formats.Asn1.dll
+ system.formats.asn1/11.0.0-rc.3.26522.148/lib/net10.0/System.Formats.Asn1.dll
  system.identitymodel.tokens.jwt/7.7.1/lib/net8.0/System.IdentityModel.Tokens.Jwt.dll
  system.memory.data/6.0.0/lib/net6.0/System.Memory.Data.dll
- system.security.cryptography.pkcs/11.0.0-rc.3.26522.148/lib/netstandard2.1/System.Security.Cryptography.Pkcs.dll
+ system.security.cryptography.pkcs/11.0.0-rc.3.26522.148/lib/net10.0/System.Security.Cryptography.Pkcs.dll
  system.security.cryptography.protecteddata/9.0.4/lib/net9.0/System.Security.Cryptography.ProtectedData.dll
  system.security.permissions/8.0.0/lib/net8.0/System.Security.Permissions.dll
  system.windows.extensions/8.0.0/lib/net8.0/System.Windows.Extensions.dll
@@ -192,7 +192,7 @@ Microsoft.NETCore.App.Ref
 Microsoft.NET.Sdk/analyzers
 
 [analyzerConfigFiles]
-obj/Debug/net9.0/apicore9.GeneratedMSBuildEditorConfig.editorconfig
+obj/Debug/net10.0/apicore9.GeneratedMSBuildEditorConfig.editorconfig
 
 [projectReferences]
 
