@@ -8,7 +8,7 @@ namespace com.rorisoft.structures.tree
     {
         public class Node
         {
-            public string value;
+            public string? value;
             public Dictionary<char, Node> nodos;
             public bool isEnd;
 
@@ -77,7 +77,7 @@ namespace com.rorisoft.structures.tree
             return nodo != null && nodo.isEnd;
         }
 
-        public Node GetLastNode(string prefix)
+        public Node? GetLastNode(string prefix)
         {
             Node nodo = this.root;
             foreach ( var c in prefix)
@@ -98,19 +98,24 @@ namespace com.rorisoft.structures.tree
             List<string> results = new List<string>();
             int total = 0;
 
-            Node actualNode = GetLastNode(prefix);
+            Node? actualNode = GetLastNode(prefix);
 
             results = GetChildWords(actualNode, results, max, ref total);
 
             return results; 
         }
 
-        public List<string> GetChildWords(Node n, List<string> results, int max, ref int total)
+        public List<string> GetChildWords(Node? n, List<string> results, int max, ref int total)
         {
+            if (n is null)
+                return [];
+
             if (n.isEnd && total < max)
             {
-                results.Add(n.value);
-                total++;
+                if (!string.IsNullOrEmpty(n.value)) {
+                    results.Add(n.value);
+                    total++;
+                }
             }
             if (total < max) { 
                 foreach (var item in n.nodos)
